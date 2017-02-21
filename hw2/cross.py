@@ -53,34 +53,41 @@ def process_data():
     for x in edges:
         edge_dict.setdefault(x[0], []).append(x)
 
-    # TODO Organize the edges by layer
-
-
     # Sort the nodes per layer into a dictionary
     for y in in_layers:
         layer_dict.setdefault(y[0], []).append(y[1])
 
+    # Organize the edges by layer
+    for z in range(layers - 1):
+        node_list = layer_dict.get(z)
+        for a in node_list:
+            node_edges = edge_dict.get(a)
+            if node_edges is not None:
+                for b in node_edges:
+                    layer_edges.setdefault(z, []).append(b)
     return;
 
 
 # Evaluate each permutation to see for a proper match
 def evaluate2(perm1, perm2):
     global optimization
-    for x in perm1:
-        for y in perm2:
+    for x in perm1: # Iterate through layer 1 list of lists
+        for y in perm2: # Iterate through layer 2 list of lists
+            layer_edges = []
+            # TODO Check each edge to see for crossing and compare optimization
+            for z in x: # Iterate through each node in each list for edges
+                if edge_dict.get(z) is not None:
+                    layer_edges.append(edge_dict.get(z))
 
-            # TODO Check each edge to see for crossing
-            layer_len = len(x)
 
-
-
-            return;
+    return;
 
 
 # Generates the permutations per layer
 def permute():
     # Reformat the data for easier use
     process_data()
+
     # Permute each layer
     for i in range(layers):
         if i == 0 | i == 1:
@@ -98,7 +105,7 @@ def permute():
 if __name__ == "__main__":
     # Take the file in as input
     inputFile = './input/input_01.txt'
-    #inputFile = sys.argv[1]
+    # inputFile = sys.argv[1]
 
     # Open the file for reading
     with open(inputFile, 'r') as fileObj:
@@ -111,4 +118,6 @@ if __name__ == "__main__":
             process_line(line)
     # Close the file
     fileObj.closed
+
+    # Permute through each combination and evaluate the crossings
     permute()
